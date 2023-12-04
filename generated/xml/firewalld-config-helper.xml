@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node name="/org/fedoraproject/FirewallD1/config/helper/0">
+  <interface name="org.fedoraproject.FirewallD1.config.helper">
+    <method name="getSettings">
+      <arg direction="out" type="(sssssa(ss))"/>
+    </method>
+    <method name="update">
+      <arg direction="in" type="(sssssa(ss))" name="settings"/>
+    </method>
+    <method name="loadDefaults">
+    </method>
+    <signal name="Updated">
+      <arg type="s" name="name"/>
+    </signal>
+    <method name="remove">
+    </method>
+    <signal name="Removed">
+      <arg type="s" name="name"/>
+    </signal>
+    <method name="rename">
+      <arg direction="in" type="s" name="name"/>
+    </method>
+    <signal name="Renamed">
+      <arg type="s" name="name"/>
+    </signal>
+    <method name="getVersion">
+      <arg direction="out" type="s"/>
+    </method>
+    <method name="setVersion">
+      <arg direction="in" type="s" name="version"/>
+    </method>
+    <method name="getShort">
+      <arg direction="out" type="s"/>
+    </method>
+    <method name="setShort">
+      <arg direction="in" type="s" name="short"/>
+    </method>
+    <method name="getDescription">
+      <arg direction="out" type="s"/>
+    </method>
+    <method name="setDescription">
+      <arg direction="in" type="s" name="description"/>
+    </method>
+    <method name="getFamily">
+      <arg direction="out" type="s"/>
+    </method>
+    <method name="setFamily">
+      <arg direction="in" type="s" name="ipv"/>
+    </method>
+    <method name="queryFamily">
+      <arg direction="in" type="s" name="ipv"/>
+      <arg direction="out" type="b"/>
+    </method>
+    <method name="getModule">
+      <arg direction="out" type="s"/>
+    </method>
+    <method name="setModule">
+      <arg direction="in" type="s" name="module"/>
+    </method>
+    <method name="queryModule">
+      <arg direction="in" type="s" name="module"/>
+      <arg direction="out" type="b"/>
+    </method>
+    <method name="getPorts">
+      <arg direction="out" type="a(ss)"/>
+    </method>
+    <method name="setPorts">
+      <arg direction="in" type="a(ss)" name="ports"/>
+    </method>
+    <method name="addPort">
+      <arg direction="in" type="s" name="port"/>
+      <arg direction="in" type="s" name="protocol"/>
+    </method>
+    <method name="removePort">
+      <arg direction="in" type="s" name="port"/>
+      <arg direction="in" type="s" name="protocol"/>
+    </method>
+    <method name="queryPort">
+      <arg direction="in" type="s" name="port"/>
+      <arg direction="in" type="s" name="protocol"/>
+      <arg direction="out" type="b"/>
+    </method>
+    <property name="name" type="s" access="read"/>
+    <property name="filename" type="s" access="read"/>
+    <property name="path" type="s" access="read"/>
+    <property name="default" type="b" access="read"/>
+    <property name="builtin" type="b" access="read"/>
+  </interface>
+</node>

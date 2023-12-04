@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node name="/org/fedoraproject/FirewallD1/config/policy/0">
+  <interface name="org.fedoraproject.FirewallD1.config.policy">
+    <method name="getSettings">
+      <arg direction="out" type="a{sv}"/>
+    </method>
+    <method name="update">
+      <arg direction="in" type="a{sv}" name="settings"/>
+    </method>
+    <method name="loadDefaults">
+    </method>
+    <signal name="Updated">
+      <arg type="s" name="name"/>
+    </signal>
+    <method name="remove">
+    </method>
+    <signal name="Removed">
+      <arg type="s" name="name"/>
+    </signal>
+    <method name="rename">
+      <arg direction="in" type="s" name="name"/>
+    </method>
+    <signal name="Renamed">
+      <arg type="s" name="name"/>
+    </signal>
+    <property name="name" type="s" access="read"/>
+    <property name="filename" type="s" access="read"/>
+    <property name="path" type="s" access="read"/>
+    <property name="default" type="b" access="read"/>
+    <property name="builtin" type="b" access="read"/>
+  </interface>
+</node>
