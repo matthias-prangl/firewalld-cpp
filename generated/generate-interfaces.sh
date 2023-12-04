@@ -21,5 +21,5 @@ for key in "${!objects[@]}"; do
     elif [ "$key" = "firewalld-config" ]; then
         xmlstarlet ed -L -d "//interface[@name=\"org.fedoraproject.FirewallD1.config.direct\"]" xml/"$key".xml
     fi
-    sdbus-c++-xml2cpp xml/"$key".xml --proxy=include/"$key".h
+    sdbus-c++-xml2cpp xml/"$key".xml --proxy=include/"$key"-gen.h
 done
