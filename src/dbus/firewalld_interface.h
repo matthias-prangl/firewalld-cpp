@@ -887,7 +887,7 @@ Q_SIGNALS: // SIGNALS
 
 namespace org {
   namespace fedoraproject {
-    using FirewallD1 = ::OrgFedoraprojectFirewallD1Interface;
+    using FirewallD1Interface = ::OrgFedoraprojectFirewallD1Interface;
     namespace FirewallD1 {
       using ipset = ::OrgFedoraprojectFirewallD1IpsetInterface;
       using policies = ::OrgFedoraprojectFirewallD1PoliciesInterface;

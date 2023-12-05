@@ -107,7 +107,7 @@ public:
     { setProperty("RFC3964_IPv4", QVariant::fromValue(value)); }
 
 public Q_SLOTS: // METHODS
-    inline QDBusPendingReply<QDBusObjectPath> addIPSet(const QString &ipset, FWIPsetSettings settings)
+    inline QDBusPendingReply<QDBusObjectPath> addIPSet(const QString &ipset, FWIPSetSettings settings)
     {
         QList<QVariant> argumentList;
         argumentList << QVariant::fromValue(ipset) << QVariant::fromValue(settings);
@@ -423,7 +423,7 @@ Q_SIGNALS: // SIGNALS
 namespace org {
   namespace fedoraproject {
     namespace FirewallD1 {
-      using config = ::OrgFedoraprojectFirewallD1ConfigInterface;
+      using configInterface = ::OrgFedoraprojectFirewallD1ConfigInterface;
       namespace config {
         using policies = ::OrgFedoraprojectFirewallD1ConfigPoliciesInterface;
       }

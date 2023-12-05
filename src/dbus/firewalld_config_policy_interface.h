@@ -40,8 +40,9 @@ public:
     inline bool builtin() const
     { return qvariant_cast< bool >(property("builtin")); }
 
-    Q_PROPERTY(bool default READ default)
-    inline bool default() const
+    // Renamed from default to isDefeault, as default is a keyword and not allowed
+    Q_PROPERTY(bool isDefault READ isDefault)
+    inline bool isDefault() const
     { return qvariant_cast< bool >(property("default")); }
 
     Q_PROPERTY(QString filename READ filename)
