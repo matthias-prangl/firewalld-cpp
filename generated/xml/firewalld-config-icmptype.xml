@@ -1,12 +1,14 @@
 <?xml version="1.0"?>
 <!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
-<node name="/org/fedoraproject/FirewallD1/config/icmptype/0">
+<node name="org/fedoraproject/FirewallD1/config/icmptype/0">
   <interface name="org.fedoraproject.FirewallD1.config.icmptype">
     <method name="getSettings">
       <arg direction="out" type="(sssas)"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="FWIcmpTypeSettings"/>
     </method>
     <method name="update">
       <arg direction="in" type="(sssas)" name="settings"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="FWIcmpTypeSettings"/>
     </method>
     <method name="loadDefaults">
     </method>

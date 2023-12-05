@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
-<node name="/org/fedoraproject/FirewallD1">
+<node name="org/fedoraproject/FirewallD1">
   <interface name="org.fedoraproject.FirewallD1">
     <method name="reload">
     </method>
@@ -25,20 +25,13 @@
     </signal>
     <signal name="PanicModeDisabled">
     </signal>
-    <method name="getZoneSettings">
-      <arg direction="in" type="s" name="zone"/>
-      <arg direction="out" type="(sssbsasa(ss)asba(ssss)asasasasa(ss)b)"/>
-    </method>
     <method name="listServices">
       <arg direction="out" type="as"/>
-    </method>
-    <method name="getServiceSettings">
-      <arg direction="in" type="s" name="service"/>
-      <arg direction="out" type="(sssa(ss)asa{ss}asa(ss))"/>
     </method>
     <method name="getServiceSettings2">
       <arg direction="in" type="s" name="service"/>
       <arg direction="out" type="a{sv}"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
     </method>
     <method name="listIcmpTypes">
       <arg direction="out" type="as"/>
@@ -46,6 +39,7 @@
     <method name="getIcmpTypeSettings">
       <arg direction="in" type="s" name="icmptype"/>
       <arg direction="out" type="(sssas)"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="FWIcmpTypeSettings"/>
     </method>
     <method name="getLogDenied">
       <arg direction="out" type="s"/>
@@ -56,9 +50,6 @@
     <signal name="LogDeniedChanged">
       <arg type="s" name="value"/>
     </signal>
-    <method name="getAutomaticHelpers">
-      <arg direction="out" type="s"/>
-    </method>
     <method name="setAutomaticHelpers">
       <arg direction="in" type="s" name="value"/>
     </method>
@@ -82,6 +73,7 @@
     <method name="getHelperSettings">
       <arg direction="in" type="s" name="helper"/>
       <arg direction="out" type="(sssssa(ss))"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="FWHelperSettings"/>
     </method>
     <property name="version" type="s" access="read"/>
     <property name="interface_version" type="s" access="read"/>
@@ -92,9 +84,6 @@
     <property name="BRIDGE" type="b" access="read"/>
     <property name="IPSet" type="b" access="read"/>
     <property name="IPSetTypes" type="as" access="read"/>
-    <property name="nf_conntrack_helper_setting" type="b" access="read"/>
-    <property name="nf_conntrack_helpers" type="a{sas}" access="read"/>
-    <property name="nf_nat_helpers" type="a{sas}" access="read"/>
     <property name="IPv4ICMPTypes" type="as" access="read"/>
     <property name="IPv6ICMPTypes" type="as" access="read"/>
   </interface>
@@ -141,6 +130,7 @@
     </method>
     <method name="getLockdownWhitelistUids">
       <arg direction="out" type="ai"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="IntList"/>
     </method>
     <signal name="LockdownWhitelistUidAdded">
       <arg type="i" name="uid"/>
@@ -191,20 +181,24 @@
     <method name="getZoneSettings2">
       <arg direction="in" type="s" name="zone"/>
       <arg direction="out" type="a{sv}"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
     </method>
     <method name="setZoneSettings2">
       <arg direction="in" type="s" name="zone"/>
       <arg direction="in" type="a{sv}" name="settings"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In1" value="QVariantMap"/>
     </method>
     <signal name="ZoneUpdated">
       <arg type="s" name="zone"/>
       <arg type="a{sv}" name="settings"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out1" value="QVariantMap"/>
     </signal>
     <method name="getZones">
       <arg direction="out" type="as"/>
     </method>
     <method name="getActiveZones">
       <arg direction="out" type="a{sa{sas}}"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="FWActiveZoneMap"/>
     </method>
     <method name="getZoneOfInterface">
       <arg direction="in" type="s" name="interface"/>
@@ -214,16 +208,7 @@
       <arg direction="in" type="s" name="source"/>
       <arg direction="out" type="s"/>
     </method>
-    <method name="isImmutable">
-      <arg direction="in" type="s" name="zone"/>
-      <arg direction="out" type="b"/>
-    </method>
     <method name="addInterface">
-      <arg direction="in" type="s" name="zone"/>
-      <arg direction="in" type="s" name="interface"/>
-      <arg direction="out" type="s"/>
-    </method>
-    <method name="changeZone">
       <arg direction="in" type="s" name="zone"/>
       <arg direction="in" type="s" name="interface"/>
       <arg direction="out" type="s"/>
@@ -248,10 +233,6 @@
       <arg direction="out" type="as"/>
     </method>
     <signal name="InterfaceAdded">
-      <arg type="s" name="zone"/>
-      <arg type="s" name="interface"/>
-    </signal>
-    <signal name="ZoneChanged">
       <arg type="s" name="zone"/>
       <arg type="s" name="interface"/>
     </signal>
@@ -379,6 +360,7 @@
     <method name="getPorts">
       <arg direction="in" type="s" name="zone"/>
       <arg direction="out" type="aas"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="FWPortArray"/>
     </method>
     <signal name="PortAdded">
       <arg type="s" name="zone"/>
@@ -442,6 +424,7 @@
     <method name="getSourcePorts">
       <arg direction="in" type="s" name="zone"/>
       <arg direction="out" type="aas"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="FWPortArray"/>
     </method>
     <signal name="SourcePortAdded">
       <arg type="s" name="zone"/>
@@ -502,6 +485,7 @@
     <method name="getForwardPorts">
       <arg direction="in" type="s" name="zone"/>
       <arg direction="out" type="aas"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="FWPortArray"/>
     </method>
     <signal name="ForwardPortAdded">
       <arg type="s" name="zone"/>
@@ -570,20 +554,24 @@
     <method name="getPolicySettings">
       <arg direction="in" type="s" name="policy"/>
       <arg direction="out" type="a{sv}"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
     </method>
     <method name="setPolicySettings">
       <arg direction="in" type="s" name="policy"/>
       <arg direction="in" type="a{sv}" name="settings"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In1" value="QVariant"/>
     </method>
     <signal name="PolicyUpdated">
       <arg type="s" name="policy"/>
       <arg type="a{sv}" name="settings"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out1" value="QVariantMap"/>
     </signal>
     <method name="getPolicies">
       <arg direction="out" type="as"/>
     </method>
     <method name="getActivePolicies">
       <arg direction="out" type="a{sa{sas}}"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
     </method>
   </interface>
   <interface name="org.fedoraproject.FirewallD1.ipset">
@@ -597,6 +585,7 @@
     <method name="getIPSetSettings">
       <arg direction="in" type="s" name="ipset"/>
       <arg direction="out" type="(ssssa{ss}as)"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="FWIPSetSettings"/>
     </method>
     <method name="addEntry">
       <arg direction="in" type="s" name="ipset"/>

@@ -1,18 +1,14 @@
 <?xml version="1.0"?>
 <!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
-<node name="/org/fedoraproject/FirewallD1/config/service/0">
+<node name="org/fedoraproject/FirewallD1/config/service/0">
   <interface name="org.fedoraproject.FirewallD1.config.service">
-    <method name="getSettings">
-      <arg direction="out" type="(sssa(ss)asa{ss}asa(ss))"/>
-    </method>
     <method name="getSettings2">
       <arg direction="out" type="a{sv}"/>
-    </method>
-    <method name="update">
-      <arg direction="in" type="(sssa(ss)asa{ss}asa(ss))" name="settings"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
     </method>
     <method name="update2">
       <arg direction="in" type="a{sv}" name="settings"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="QVariantMap"/>
     </method>
     <method name="loadDefaults">
     </method>
@@ -50,9 +46,11 @@
     </method>
     <method name="getPorts">
       <arg direction="out" type="a(ss)"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="FWPortList"/>
     </method>
     <method name="setPorts">
       <arg direction="in" type="a(ss)" name="ports"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="FWPortList"/>
     </method>
     <method name="addPort">
       <arg direction="in" type="s" name="port"/>
@@ -85,9 +83,11 @@
     </method>
     <method name="getSourcePorts">
       <arg direction="out" type="a(ss)"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="FWPortList"/>
     </method>
     <method name="setSourcePorts">
       <arg direction="in" type="a(ss)" name="ports"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="FWPortList"/>
     </method>
     <method name="addSourcePort">
       <arg direction="in" type="s" name="port"/>
@@ -102,27 +102,13 @@
       <arg direction="in" type="s" name="protocol"/>
       <arg direction="out" type="b"/>
     </method>
-    <method name="getModules">
-      <arg direction="out" type="as"/>
-    </method>
-    <method name="setModules">
-      <arg direction="in" type="as" name="modules"/>
-    </method>
-    <method name="addModule">
-      <arg direction="in" type="s" name="module"/>
-    </method>
-    <method name="removeModule">
-      <arg direction="in" type="s" name="module"/>
-    </method>
-    <method name="queryModule">
-      <arg direction="in" type="s" name="module"/>
-      <arg direction="out" type="b"/>
-    </method>
     <method name="getDestinations">
       <arg direction="out" type="a{ss}"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="FWStringMap"/>
     </method>
     <method name="setDestinations">
       <arg direction="in" type="a{ss}" name="destinations"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="FWStringMap"/>
     </method>
     <method name="getDestination">
       <arg direction="in" type="s" name="family"/>

@@ -1,12 +1,14 @@
 <?xml version="1.0"?>
 <!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
-<node name="/org/fedoraproject/FirewallD1/config/helper/0">
+<node name="org/fedoraproject/FirewallD1/config/helper/0">
   <interface name="org.fedoraproject.FirewallD1.config.helper">
     <method name="getSettings">
       <arg direction="out" type="(sssssa(ss))"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="FWHelperSettings"/>
     </method>
     <method name="update">
       <arg direction="in" type="(sssssa(ss))" name="settings"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="FWHelperSettings"/>
     </method>
     <method name="loadDefaults">
     </method>
@@ -64,9 +66,11 @@
     </method>
     <method name="getPorts">
       <arg direction="out" type="a(ss)"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="FWPortList"/>
     </method>
     <method name="setPorts">
       <arg direction="in" type="a(ss)" name="ports"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="FWPortList"/>
     </method>
     <method name="addPort">
       <arg direction="in" type="s" name="port"/>

@@ -1,0 +1,95 @@
+<?xml version="1.0" ?>
+<!DOCTYPE node PUBLIC '-//freedesktop//DTD D-BUS Object Introspection 1.0//EN'  'http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd'>
+<node name="org/fedoraproject/FirewallD1/config/ipset/0">
+  <interface name="org.fedoraproject.FirewallD1.config.ipset">
+    <method name="getSettings">
+      <arg direction="out" type="(ssssa{ss}as)"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="FWIPSetSettings"/>
+    </method>
+    <method name="update">
+      <arg direction="in" type="(ssssa{ss}as)" name="settings"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="FWIPSetSettings"/>
+    </method>
+    <method name="loadDefaults">
+    </method>
+    <signal name="Updated">
+      <arg type="s" name="name"/>
+    </signal>
+    <method name="remove">
+    </method>
+    <signal name="Removed">
+      <arg type="s" name="name"/>
+    </signal>
+    <method name="rename">
+      <arg direction="in" type="s" name="name"/>
+    </method>
+    <signal name="Renamed">
+      <arg type="s" name="name"/>
+    </signal>
+    <method name="getVersion">
+      <arg direction="out" type="s"/>
+    </method>
+    <method name="setVersion">
+      <arg direction="in" type="s" name="version"/>
+    </method>
+    <method name="getShort">
+      <arg direction="out" type="s"/>
+    </method>
+    <method name="setShort">
+      <arg direction="in" type="s" name="short"/>
+    </method>
+    <method name="getDescription">
+      <arg direction="out" type="s"/>
+    </method>
+    <method name="setDescription">
+      <arg direction="in" type="s" name="description"/>
+    </method>
+    <method name="getType">
+      <arg direction="out" type="s"/>
+    </method>
+    <method name="setType">
+      <arg direction="in" type="s" name="ipset_type"/>
+    </method>
+    <method name="getOptions">
+      <arg direction="out" type="a{ss}"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="FWStringMap"/>
+    </method>
+    <method name="setOptions">
+      <arg direction="in" type="a{ss}" name="options"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="FWStringMap"/>
+    </method>
+    <method name="addOption">
+      <arg direction="in" type="s" name="key"/>
+      <arg direction="in" type="s" name="value"/>
+    </method>
+    <method name="removeOption">
+      <arg direction="in" type="s" name="key"/>
+    </method>
+    <method name="queryOption">
+      <arg direction="in" type="s" name="key"/>
+      <arg direction="in" type="s" name="value"/>
+      <arg direction="out" type="b"/>
+    </method>
+    <method name="getEntries">
+      <arg direction="out" type="as"/>
+    </method>
+    <method name="setEntries">
+      <arg direction="in" type="as" name="entries"/>
+    </method>
+    <method name="addEntry">
+      <arg direction="in" type="s" name="entry"/>
+    </method>
+    <method name="removeEntry">
+      <arg direction="in" type="s" name="entry"/>
+    </method>
+    <method name="queryEntry">
+      <arg direction="in" type="s" name="entry"/>
+      <arg direction="out" type="b"/>
+    </method>
+  <property name="name" type="s" access="read"/>
+  <property name="filename" type="s" access="read"/>
+  <property name="path" type="s" access="read"/>
+  <property name="default" type="b" access="read"/>
+  <property name="builtin" type="b" access="read"/>
+  </interface>
+</node>

@@ -1,12 +1,14 @@
 <?xml version="1.0"?>
 <!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
-<node name="/org/fedoraproject/FirewallD1/config">
+<node name="org/fedoraproject/FirewallD1/config">
   <interface name="org.fedoraproject.FirewallD1.config.policies">
     <method name="getLockdownWhitelist">
       <arg direction="out" type="(asasasai)"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="FWLockdownWhiteList"/>
     </method>
     <method name="setLockdownWhitelist">
       <arg direction="in" type="(asasasai)" name="settings"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="FWLockdownWhiteList"/>
     </method>
     <signal name="LockdownWhitelistUpdated">
     </signal>
@@ -61,6 +63,7 @@
     </method>
     <method name="getLockdownWhitelistUids">
       <arg direction="out" type="ai"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="IntList"/>
     </method>
   </interface>
   <interface name="org.fedoraproject.FirewallD1.config">
@@ -78,6 +81,7 @@
       <arg direction="in" type="s" name="ipset"/>
       <arg direction="in" type="(ssssa{ss}as)" name="settings"/>
       <arg direction="out" type="o"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In1" value="FWIPSetSettings"/>
     </method>
     <signal name="IPSetAdded">
       <arg type="s" name="ipset"/>
@@ -96,6 +100,7 @@
       <arg direction="in" type="s" name="icmptype"/>
       <arg direction="in" type="(sssas)" name="settings"/>
       <arg direction="out" type="o"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In1" value="FWIcmpTypeSettings"/>
     </method>
     <signal name="IcmpTypeAdded">
       <arg type="s" name="icmptype"/>
@@ -110,15 +115,11 @@
       <arg direction="in" type="s" name="service"/>
       <arg direction="out" type="o"/>
     </method>
-    <method name="addService">
-      <arg direction="in" type="s" name="service"/>
-      <arg direction="in" type="(sssa(ss)asa{ss}asa(ss))" name="settings"/>
-      <arg direction="out" type="o"/>
-    </method>
     <method name="addService2">
       <arg direction="in" type="s" name="service"/>
       <arg direction="in" type="a{sv}" name="settings"/>
       <arg direction="out" type="o"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In1" value="QVariantMap"/>
     </method>
     <signal name="ServiceAdded">
       <arg type="s" name="service"/>
@@ -141,15 +142,11 @@
       <arg direction="in" type="s" name="source"/>
       <arg direction="out" type="s"/>
     </method>
-    <method name="addZone">
-      <arg direction="in" type="s" name="zone"/>
-      <arg direction="in" type="(sssbsasa(ss)asba(ssss)asasasasa(ss)b)" name="settings"/>
-      <arg direction="out" type="o"/>
-    </method>
     <method name="addZone2">
       <arg direction="in" type="s" name="zone"/>
       <arg direction="in" type="a{sv}" name="settings"/>
       <arg direction="out" type="o"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In1" value="QVariantMap"/>
     </method>
     <signal name="ZoneAdded">
       <arg type="s" name="zone"/>
@@ -168,6 +165,7 @@
       <arg direction="in" type="s" name="policy"/>
       <arg direction="in" type="a{sv}" name="settings"/>
       <arg direction="out" type="o"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In1" value="QVariantMap"/>
     </method>
     <signal name="PolicyAdded">
       <arg type="s" name="policy"/>
@@ -182,27 +180,19 @@
       <arg direction="in" type="s" name="helper"/>
       <arg direction="out" type="o"/>
     </method>
-    <method name="addHelper">
-      <arg direction="in" type="s" name="helper"/>
-      <arg direction="in" type="(sssssa(ss))" name="settings"/>
-      <arg direction="out" type="o"/>
-    </method>
     <signal name="HelperAdded">
       <arg type="s" name="helper"/>
     </signal>
     <property name="DefaultZone" type="s" access="read"/>
-    <property name="MinimalMark" type="i" access="readwrite"/>
     <property name="CleanupOnExit" type="s" access="readwrite"/>
     <property name="CleanupModulesOnExit" type="s" access="readwrite"/>
     <property name="Lockdown" type="s" access="readwrite"/>
     <property name="IPv6_rpfilter" type="s" access="readwrite"/>
     <property name="IndividualCalls" type="s" access="readwrite"/>
     <property name="LogDenied" type="s" access="readwrite"/>
-    <property name="AutomaticHelpers" type="s" access="readwrite"/>
     <property name="FirewallBackend" type="s" access="readwrite"/>
     <property name="FlushAllOnReload" type="s" access="readwrite"/>
     <property name="RFC3964_IPv4" type="s" access="readwrite"/>
-    <property name="AllowZoneDrifting" type="s" access="readwrite"/>
     <property name="NftablesFlowtable" type="s" access="readwrite"/>
     <property name="NftablesCounters" type="s" access="readwrite"/>
   </interface>
