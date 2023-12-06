@@ -8,9 +8,31 @@
 firewalld::config::ZonePrivate::ZonePrivate(const QString &path, Zone *q)
     : zoneIface_(firewalld::dbus::kFirewallDDBusService, path,
                  QDBusConnection::systemBus()),
-      q_ptr(q) {
-  qWarning() << zoneIface_.isValid();
-  qWarning() << zoneIface_.lastError();
+      q_ptr(q) {}
+
+void firewalld::config::ZonePrivate::init() {
+  QObject::connect(&zoneIface_,
+                   &OrgFedoraprojectFirewallD1ConfigZoneInterface::Removed,
+                   this, &ZonePrivate::zoneRemoved);
+  QObject::connect(&zoneIface_,
+                   &OrgFedoraprojectFirewallD1ConfigZoneInterface::Renamed,
+                   this, &ZonePrivate::zoneRenamed);
+  QObject::connect(&zoneIface_,
+                   &OrgFedoraprojectFirewallD1ConfigZoneInterface::Updated,
+                   this, &ZonePrivate::zoneUpdated);
+}
+
+void firewalld::config::ZonePrivate::zoneRemoved(const QString &name) {
+  Q_Q(Zone);
+  emit q->removed(name);
+}
+void firewalld::config::ZonePrivate::zoneRenamed(const QString &name) {
+  Q_Q(Zone);
+  emit q->renamed(name);
+}
+void firewalld::config::ZonePrivate::zoneUpdated(const QString &name) {
+  Q_Q(Zone);
+  emit q->updated(name);
 }
 
 firewalld::config::Zone::Zone(const QString &path, QObject *parent)
@@ -19,14 +41,37 @@ firewalld::config::Zone::Zone(const QString &path, QObject *parent)
   d->init();
 }
 
-void firewalld::config::ZonePrivate::init() {}
-
 firewalld::config::Zone::~Zone() {
   Q_D(Zone);
   delete d;
 }
 
 firewalld::config::ZonePrivate::~ZonePrivate() {}
+
+bool firewalld::config::Zone::builtin() {
+  Q_D(const Zone);
+  return d->builtin;
+}
+
+bool firewalld::config::Zone::isDefault() {
+  Q_D(const Zone);
+  return d->isDefault;
+}
+
+QString firewalld::config::Zone::filename() {
+  Q_D(const Zone);
+  return d->filename;
+}
+
+QString firewalld::config::Zone::name() {
+  Q_D(const Zone);
+  return d->name;
+}
+
+QString firewalld::config::Zone::path() {
+  Q_D(const Zone);
+  return d->path;
+}
 
 QDBusPendingReply<QString> firewalld::config::Zone::getDescription() {
   Q_D(Zone);

@@ -12,9 +12,20 @@ public:
   ~ZonePrivate() override;
   void init();
 
+  bool builtin;
+  bool isDefault;
+  QString filename;
+  QString name;
+  QString path;
+
   OrgFedoraprojectFirewallD1ConfigZoneInterface zoneIface_;
   Zone *q_ptr;
 
   Q_DECLARE_PUBLIC(Zone)
+
+public slots:
+    void zoneRemoved(const QString& name);
+    void zoneRenamed(const QString& name);
+    void zoneUpdated(const QString& name);
 };
 } // namespace firewalld::config

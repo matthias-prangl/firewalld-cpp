@@ -9,12 +9,27 @@ class ZonePrivate;
 
 class Zone : public QObject {
   Q_OBJECT
+
+  Q_PROPERTY(bool builtin READ builtin)
+  Q_PROPERTY(bool isDefault READ isDefault)
+  Q_PROPERTY(QString filename READ filename)
+  Q_PROPERTY(QString name READ name)
+  Q_PROPERTY(QString path READ path)
+
 public:
   explicit Zone(const QString &path, QObject *parent = nullptr);
   ~Zone() override;
 
+  bool builtin();
+  bool isDefault();
+  QString filename();
+  QString name();
+  QString path();
 
-  QDBusPendingReply<> addForwardPort(const QString &port, const QString &protocol, const QString &toport, const QString &toaddr);
+  QDBusPendingReply<> addForwardPort(const QString &port,
+                                     const QString &protocol,
+                                     const QString &toport,
+                                     const QString &toaddr);
   QDBusPendingReply<> addIcmpBlock(const QString &icmptype);
   QDBusPendingReply<> addIcmpBlockInversion();
   QDBusPendingReply<> addInterface(const QString &interface);
@@ -24,23 +39,32 @@ public:
   QDBusPendingReply<> addRichRule(const QString &rule);
   QDBusPendingReply<> addService(const QString &service);
   QDBusPendingReply<> addSource(const QString &source);
-  QDBusPendingReply<> addSourcePort(const QString &port, const QString &protocol);
+  QDBusPendingReply<> addSourcePort(const QString &port,
+                                    const QString &protocol);
   QDBusPendingReply<> loadDefaults();
 
-  QDBusPendingReply<bool> queryForwardPort(const QString &port, const QString &protocol, const QString &toport, const QString &toaddr);
+  QDBusPendingReply<bool> queryForwardPort(const QString &port,
+                                           const QString &protocol,
+                                           const QString &toport,
+                                           const QString &toaddr);
   QDBusPendingReply<bool> queryIcmpBlock(const QString &icmptype);
   QDBusPendingReply<bool> queryIcmpBlockInversion();
   QDBusPendingReply<bool> queryInterface(const QString &interface);
   QDBusPendingReply<bool> queryMasquerade();
-  QDBusPendingReply<bool> queryPort(const QString &port, const QString &protocol);
+  QDBusPendingReply<bool> queryPort(const QString &port,
+                                    const QString &protocol);
   QDBusPendingReply<bool> queryProtocol(const QString &protocol);
   QDBusPendingReply<bool> queryRichRule(const QString &rule);
   QDBusPendingReply<bool> queryService(const QString &service);
   QDBusPendingReply<bool> querySource(const QString &source);
-  QDBusPendingReply<bool> querySourcePort(const QString &port, const QString &protocol);
+  QDBusPendingReply<bool> querySourcePort(const QString &port,
+                                          const QString &protocol);
 
   QDBusPendingReply<> remove();
-  QDBusPendingReply<> removeForwardPort(const QString &port, const QString &protocol, const QString &toport, const QString &toaddr);
+  QDBusPendingReply<> removeForwardPort(const QString &port,
+                                        const QString &protocol,
+                                        const QString &toport,
+                                        const QString &toaddr);
   QDBusPendingReply<> removeIcmpBlock(const QString &icmptype);
   QDBusPendingReply<> removeIcmpBlockInversion();
   QDBusPendingReply<> removeInterface(const QString &interface);
@@ -50,7 +74,8 @@ public:
   QDBusPendingReply<> removeRichRule(const QString &rule);
   QDBusPendingReply<> removeService(const QString &service);
   QDBusPendingReply<> removeSource(const QString &source);
-  QDBusPendingReply<> removeSourcePort(const QString &port, const QString &protocol);
+  QDBusPendingReply<> removeSourcePort(const QString &port,
+                                       const QString &protocol);
   QDBusPendingReply<> rename(const QString &name);
 
   QDBusPendingReply<> setDescription(const QString &description);
@@ -86,6 +111,11 @@ public:
   QDBusPendingReply<QStringList> getSources();
   QDBusPendingReply<QString> getTarget();
   QDBusPendingReply<QString> getVersion();
+
+signals:
+  void removed(const QString &name);
+  void renamed(const QString &name);
+  void updated(const QString &name);
 
 protected:
   ZonePrivate *const d_ptr;
