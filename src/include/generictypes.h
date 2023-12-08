@@ -28,6 +28,9 @@ typedef struct {
 } FWIcmpTypeSettings;
 Q_DECLARE_METATYPE(FWIcmpTypeSettings)
 
+QDBusArgument &operator<<(QDBusArgument &argument, const FWIcmpTypeSettings &icmpTypeSettings);
+const QDBusArgument &operator>>(const QDBusArgument &argument, FWIcmpTypeSettings &icmpTypeSettings);
+
 typedef struct {
   QString version;
   QString name;
@@ -37,6 +40,9 @@ typedef struct {
   FWPortList ports;
 } FWHelperSettings;
 Q_DECLARE_METATYPE(FWHelperSettings)
+
+QDBusArgument &operator<<(QDBusArgument &argument, const FWHelperSettings &helperSettings);
+const QDBusArgument &operator>>(const QDBusArgument &argument, FWHelperSettings &helperSettings);
 
 typedef struct {
   QString version;
@@ -48,6 +54,9 @@ typedef struct {
 } FWIPSetSettings;
 Q_DECLARE_METATYPE(FWIPSetSettings)
 
+QDBusArgument &operator<<(QDBusArgument &argument, const FWIPSetSettings &ipSetSettings);
+const QDBusArgument &operator>>(const QDBusArgument &argument, FWIPSetSettings &ipSetSettings);
+
 typedef struct {
   QStringList commands;
   QStringList selinuxContexts;
@@ -55,3 +64,6 @@ typedef struct {
   IntList uids;
 } FWLockdownWhiteList;
 Q_DECLARE_METATYPE(FWLockdownWhiteList);
+
+QDBusArgument &operator<<(QDBusArgument &argument, const FWLockdownWhiteList &fwLockdownWhiteList);
+const QDBusArgument &operator>>(const QDBusArgument &argument, FWLockdownWhiteList &fwLockdownWhiteList);

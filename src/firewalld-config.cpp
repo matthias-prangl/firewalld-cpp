@@ -1,23 +1,42 @@
-#include "firewalld-config_p.h"
-#include "firewalld_dbus.h"
 #include "firewalld-config.h"
-#include <qdbusconnection.h>
+#include "firewalld-config_p.h"
+#include "firewalld_config_interface.h"
+#include "firewalld_dbus.h"
 
-Q_GLOBAL_STATIC(firewalld::config::FirewallDConfigPrivate,
-                globalFirewallDConfig)
-
-firewalld::config::FirewallDConfigPrivate::FirewallDConfigPrivate()
-    : iface_(firewalld::dbus::kFirewallDDBusService,
-             firewalld::dbus::kFirewallDDBusConfigPath,
-             QDBusConnection::systemBus()) {
-  init();
+firewalld::config::ConfigPrivate::ConfigPrivate(Config *q)
+    : configIface_(firewalld::dbus::kFirewallDDBusService,
+                   firewalld::dbus::kFirewallDDBusConfigPath,
+                   QDBusConnection::systemBus()),
+      q_ptr(q) {
+  qDBusRegisterMetaType<FWStringMap>();
+  qDBusRegisterMetaType<FWIcmpTypeSettings>();
+  qDBusRegisterMetaType<FWIPSetSettings>();
 }
 
-void firewalld::config::FirewallDConfigPrivate::init() {
-  if (!iface_.isValid()) {
+void firewalld::config::ConfigPrivate::init() {
+  QObject::connect(&configIface_,
+                   &OrgFedoraprojectFirewallD1ConfigInterface::HelperAdded,
+                   this, &ConfigPrivate::configHelperAdded);
+  QObject::connect(&configIface_,
+                   &OrgFedoraprojectFirewallD1ConfigInterface::IPSetAdded, this,
+                   &ConfigPrivate::configIPSetAdded);
+  QObject::connect(&configIface_,
+                   &OrgFedoraprojectFirewallD1ConfigInterface::IcmpTypeAdded,
+                   this, &ConfigPrivate::configIcmpTypeAdded);
+  QObject::connect(&configIface_,
+                   &OrgFedoraprojectFirewallD1ConfigInterface::PolicyAdded,
+                   this, &ConfigPrivate::configPolicyAdded);
+  QObject::connect(&configIface_,
+                   &OrgFedoraprojectFirewallD1ConfigInterface::ServiceAdded,
+                   this, &ConfigPrivate::configServiceAdded);
+  QObject::connect(&configIface_,
+                   &OrgFedoraprojectFirewallD1ConfigInterface::ZoneAdded, this,
+                   &ConfigPrivate::configZoneAdded);
+
+  if (!configIface_.isValid()) {
     return;
   }
-  auto zonesReply = iface_.listZones();
+  auto zonesReply = configIface_.listZones();
   zonesReply.waitForFinished();
 
   if (zonesReply.isError()) {
@@ -30,11 +49,252 @@ void firewalld::config::FirewallDConfigPrivate::init() {
   }
 }
 
-QList<QSharedPointer<firewalld::config::Zone>> firewalld::config::zones() {
-  QList<QSharedPointer<Zone>> zones;
-  for (auto i = globalFirewallDConfig->zoneMap_.cbegin();
-       i != globalFirewallDConfig->zoneMap_.cend(); ++i) {
-    zones.append(i.value());
-  }
-  return zones;
+void firewalld::config::ConfigPrivate::configHelperAdded(
+    const QString &helper) {
+  Q_Q(Config);
+  emit q->helperAdded(helper);
+}
+void firewalld::config::ConfigPrivate::configIPSetAdded(const QString &ipset) {
+  Q_Q(Config);
+  emit q->ipSetAdded(ipset);
+}
+void firewalld::config::ConfigPrivate::configIcmpTypeAdded(
+    const QString &icmptype) {
+  Q_Q(Config);
+  emit q->icmpTypeAdded(icmptype);
+}
+void firewalld::config::ConfigPrivate::configPolicyAdded(
+    const QString &policy) {
+  Q_Q(Config);
+  emit q->policyAdded(policy);
+}
+void firewalld::config::ConfigPrivate::configServiceAdded(
+    const QString &service) {
+  Q_Q(Config);
+  emit q->serviceAdded(service);
+}
+void firewalld::config::ConfigPrivate::configZoneAdded(const QString &zone) {
+  Q_Q(Config);
+  emit q->zoneAdded(zone);
+}
+
+firewalld::config::ConfigPrivate::~ConfigPrivate() {}
+
+firewalld::config::Config::Config(QObject *parent)
+    : QObject(parent), d_ptr(new ConfigPrivate(this)) {
+  Q_D(Config);
+  d->init();
+}
+
+firewalld::config::Config::~Config() {
+  Q_D(Config);
+  delete d;
+}
+
+const QString firewalld::config::Config::defaultZone() {
+  Q_D(const Config);
+  return d->defaultZone;
+}
+
+const QString firewalld::config::Config::cleanupOnExit() {
+  Q_D(const Config);
+  return d->cleanupOnExit;
+}
+
+const QString firewalld::config::Config::cleanupModulesOnExit() {
+  Q_D(const Config);
+  return d->cleanupModulesOnExit;
+}
+
+const QString firewalld::config::Config::lockdown() {
+  Q_D(const Config);
+  return d->lockdown;
+}
+
+const QString firewalld::config::Config::iPv6_rpfilter() {
+  Q_D(const Config);
+  return d->iPv6_rpfilter;
+}
+
+const QString firewalld::config::Config::individualCalls() {
+  Q_D(const Config);
+  return d->individualCalls;
+}
+
+const QString firewalld::config::Config::logDenied() {
+  Q_D(const Config);
+  return d->logDenied;
+}
+
+const QString firewalld::config::Config::firewallBackend() {
+  Q_D(const Config);
+  return d->firewallBackend;
+}
+
+const QString firewalld::config::Config::flushAllOnReload() {
+  Q_D(const Config);
+  return d->flushAllOnReload;
+}
+
+const QString firewalld::config::Config::rFC3964_IPv4() {
+  Q_D(const Config);
+  return d->rFC3964_IPv4;
+}
+
+const QString firewalld::config::Config::nftablesFlowtable() {
+  Q_D(const Config);
+  return d->nftablesFlowtable;
+}
+
+const QString firewalld::config::Config::nftablesCounters() {
+  Q_D(const Config);
+  return d->nftablesCounters;
+}
+
+QDBusPendingReply<QDBusObjectPath>
+firewalld::config::Config::addIcmpType(const QString &icmptype,
+                                       FWIcmpTypeSettings settings) {
+  Q_D(Config);
+  return d->configIface_.addIcmpType(icmptype, settings);
+}
+QDBusPendingReply<QDBusObjectPath>
+firewalld::config::Config::addIPSet(const QString &ipset,
+                                    FWIPSetSettings settings) {
+  Q_D(Config);
+  return d->configIface_.addIPSet(ipset, settings);
+}
+
+QDBusPendingReply<QDBusObjectPath>
+firewalld::config::Config::addPolicy(const QString &policy,
+                                     const QVariantMap &settings) {
+  Q_D(Config);
+  return d->configIface_.addPolicy(policy, settings);
+}
+
+QDBusPendingReply<QDBusObjectPath>
+firewalld::config::Config::addService2(const QString &service,
+                                       const QVariantMap &settings) {
+  Q_D(Config);
+  return d->configIface_.addService2(service, settings);
+}
+
+QDBusPendingReply<QDBusObjectPath>
+firewalld::config::Config::addZone2(const QString &zone,
+                                    const QVariantMap &settings) {
+  Q_D(Config);
+  return d->configIface_.addZone2(zone, settings);
+}
+
+QDBusPendingReply<QDBusObjectPath>
+firewalld::config::Config::getHelperByName(const QString &helper) {
+  Q_D(Config);
+  return d->configIface_.getHelperByName(helper);
+}
+
+QDBusPendingReply<QStringList> firewalld::config::Config::getHelperNames() {
+  Q_D(Config);
+  return d->configIface_.getHelperNames();
+}
+
+QDBusPendingReply<QDBusObjectPath>
+firewalld::config::Config::getIcmpTypeByName(const QString &icmptype) {
+  Q_D(Config);
+  return d->configIface_.getIcmpTypeByName(icmptype);
+}
+
+QDBusPendingReply<QStringList> firewalld::config::Config::getIcmpTypeNames() {
+  Q_D(Config);
+  return d->configIface_.getIcmpTypeNames();
+}
+
+QDBusPendingReply<QDBusObjectPath>
+firewalld::config::Config::getIPSetByName(const QString &ipset) {
+  Q_D(Config);
+  return d->configIface_.getIPSetByName(ipset);
+}
+
+QDBusPendingReply<QStringList> firewalld::config::Config::getIPSetNames() {
+  Q_D(Config);
+  return d->configIface_.getIPSetNames();
+}
+
+QDBusPendingReply<QDBusObjectPath>
+firewalld::config::Config::getPolicyByName(const QString &policy) {
+  Q_D(Config);
+  return d->configIface_.getPolicyByName(policy);
+}
+
+QDBusPendingReply<QStringList> firewalld::config::Config::getPolicyNames() {
+  Q_D(Config);
+  return d->configIface_.getPolicyNames();
+}
+
+QDBusPendingReply<QDBusObjectPath>
+firewalld::config::Config::getServiceByName(const QString &service) {
+  Q_D(Config);
+  return d->configIface_.getServiceByName(service);
+}
+
+QDBusPendingReply<QStringList> firewalld::config::Config::getServiceNames() {
+  Q_D(Config);
+  return d->configIface_.getServiceNames();
+}
+
+QDBusPendingReply<QDBusObjectPath>
+firewalld::config::Config::getZoneByName(const QString &zone) {
+  Q_D(Config);
+  return d->configIface_.getZoneByName(zone);
+}
+
+QDBusPendingReply<QStringList> firewalld::config::Config::getZoneNames() {
+  Q_D(Config);
+  return d->configIface_.getZoneNames();
+}
+
+QDBusPendingReply<QString>
+firewalld::config::Config::getZoneOfInterface(const QString &iface) {
+  Q_D(Config);
+  return d->configIface_.getZoneOfInterface(iface);
+}
+
+QDBusPendingReply<QString>
+firewalld::config::Config::getZoneOfSource(const QString &source) {
+  Q_D(Config);
+  return d->configIface_.getZoneOfSource(source);
+}
+
+QDBusPendingReply<QList<QDBusObjectPath>>
+firewalld::config::Config::listHelpers() {
+  Q_D(Config);
+  return d->configIface_.listHelpers();
+}
+
+QDBusPendingReply<QList<QDBusObjectPath>>
+firewalld::config::Config::listIcmpTypes() {
+  Q_D(Config);
+  return d->configIface_.listIcmpTypes();
+}
+
+QDBusPendingReply<QList<QDBusObjectPath>>
+firewalld::config::Config::listIPSets() {
+  Q_D(Config);
+  return d->configIface_.listIPSets();
+}
+
+QDBusPendingReply<QList<QDBusObjectPath>>
+firewalld::config::Config::listPolicies() {
+  Q_D(Config);
+  return d->configIface_.listPolicies();
+}
+
+QDBusPendingReply<QList<QDBusObjectPath>>
+firewalld::config::Config::listServices() {
+  Q_D(Config);
+  return d->configIface_.listServices();
+}
+
+QDBusPendingReply<QList<QDBusObjectPath>>
+firewalld::config::Config::listZones() {
+  Q_D(Config);
+  return d->configIface_.listZones();
 }

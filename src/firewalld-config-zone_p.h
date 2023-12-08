@@ -4,6 +4,7 @@
 #include "firewalld-config-zone.h"
 
 namespace firewalld::config {
+
 class ZonePrivate : public QObject {
   Q_OBJECT
 

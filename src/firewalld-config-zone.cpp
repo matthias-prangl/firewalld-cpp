@@ -2,13 +2,14 @@
 #include "firewalld-config-zone_p.h"
 #include "firewalld_config_zone_interface.h"
 #include "firewalld_dbus.h"
-#include <qdbusconnection.h>
-#include <qobject.h>
 
 firewalld::config::ZonePrivate::ZonePrivate(const QString &path, Zone *q)
     : zoneIface_(firewalld::dbus::kFirewallDDBusService, path,
                  QDBusConnection::systemBus()),
-      q_ptr(q) {}
+      q_ptr(q) {
+  qDBusRegisterMetaType<FWPort>();
+  qDBusRegisterMetaType<FWPortList>();
+}
 
 void firewalld::config::ZonePrivate::init() {
   QObject::connect(&zoneIface_,
