@@ -1,7 +1,7 @@
 #pragma once
 
-#include "firewalld_config_zone_interface.h"
-#include <qdbuspendingreply.h>
+#include "generictypes.h"
+#include <QDBusPendingReply>
 
 namespace firewalld::config {
 

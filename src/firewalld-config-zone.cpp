@@ -11,6 +11,8 @@ firewalld::config::ZonePrivate::ZonePrivate(const QString &path, Zone *q)
   qDBusRegisterMetaType<FWPortList>();
 }
 
+firewalld::config::ZonePrivate::~ZonePrivate() {}
+
 void firewalld::config::ZonePrivate::init() {
   QObject::connect(&zoneIface_,
                    &OrgFedoraprojectFirewallD1ConfigZoneInterface::Removed,
@@ -46,8 +48,6 @@ firewalld::config::Zone::~Zone() {
   Q_D(Zone);
   delete d;
 }
-
-firewalld::config::ZonePrivate::~ZonePrivate() {}
 
 bool firewalld::config::Zone::builtin() {
   Q_D(const Zone);

@@ -1,3 +1,5 @@
+#pragma once
+
 #include "firewalld-config-policies.h"
 #include "firewalld_config_interface.h"
 

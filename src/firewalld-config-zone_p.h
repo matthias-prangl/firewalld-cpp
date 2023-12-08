@@ -1,9 +1,10 @@
 #pragma once
 
 #include "dbus/firewalld_config_zone_interface.h"
-#include "firewalld-config-zone.h"
 
 namespace firewalld::config {
+
+class Zone;
 
 class ZonePrivate : public QObject {
   Q_OBJECT

@@ -10,19 +10,25 @@ set(DBUS_INTERFACE_SOURCES
 )
 
 set(SOURCES
-  generictypes.cpp
   firewalld-config.cpp
   firewalld-config-policies.cpp
-  firewalld-config_p.h
-  firewalld-config-policies_p.h
+  firewalld-config-service.cpp
   firewalld-config-zone.cpp
-  include/firewalld-config.h
-  include/firewalld-config-policies.h
-  include/firewalld-config-zone.h
-  firewalld-config-zone_p.h
+  generictypes.cpp
 )
 
-add_library(firewalld-cpp SHARED ${SOURCES} ${DBUS_INTERFACE_SOURCES})
+set(HEADERS 
+  firewalld-config_p.h
+  firewalld-config-policies_p.h
+  firewalld-config-service_p.h
+  firewalld-config-zone_p.h
+  include/firewalld-config.h
+  include/firewalld-config-policies.h
+  include/firewalld-config-service.h
+  include/firewalld-config-zone.h
+)
+
+add_library(firewalld-cpp SHARED ${SOURCES} ${HEADERS} ${DBUS_INTERFACE_SOURCES})
 set_target_properties(firewalld-cpp PROPERTIES AUTOMOC TRUE)
 target_include_directories(firewalld-cpp PUBLIC include dbus)
 target_link_libraries(firewalld-cpp PRIVATE Qt6::DBus Qt6::Core)
