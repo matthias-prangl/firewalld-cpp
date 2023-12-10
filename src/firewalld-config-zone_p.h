@@ -26,8 +26,8 @@ public:
   Q_DECLARE_PUBLIC(Zone)
 
 public slots:
-    void zoneRemoved(const QString& name);
-    void zoneRenamed(const QString& name);
-    void zoneUpdated(const QString& name);
+  void zoneRemoved(const QString &name);
+  void zoneRenamed(const QString &name);
+  void zoneUpdated(const QString &name);
 };
 } // namespace firewalld::config
