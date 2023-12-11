@@ -1,6 +1,6 @@
 #pragma once
 
-#include "dbus/firewalld_interface.h"
+#include "firewalld_interface.h"
 
 namespace firewalld::runtime {
 

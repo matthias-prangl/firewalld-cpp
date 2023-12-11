@@ -1,6 +1,6 @@
 #pragma once
 
-#include "dbus/firewalld_config_interface.h"
+#include "firewalld_config_interface.h"
 #include "firewalld-config-zone.h"
 #include "firewalld-config.h"
 

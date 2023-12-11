@@ -1,6 +1,6 @@
 #pragma once
 
-#include "dbus/firewalld_config_service_interface.h"
+#include "firewalld_config_service_interface.h"
 
 namespace firewalld::config {
 

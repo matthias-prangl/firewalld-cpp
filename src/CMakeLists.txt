@@ -19,11 +19,11 @@ set(SOURCES
 )
 
 set(HEADERS 
-  firewalld_p.h
-  firewalld-config_p.h
-  firewalld-config-policies_p.h
-  firewalld-config-service_p.h
-  firewalld-config-zone_p.h
+  include_p/firewalld_p.h
+  include_p/firewalld-config_p.h
+  include_p/firewalld-config-policies_p.h
+  include_p/firewalld-config-service_p.h
+  include_p/firewalld-config-zone_p.h
   include/firewalld.h
   include/firewalld-config.h
   include/firewalld-config-policies.h
@@ -33,5 +33,6 @@ set(HEADERS
 
 add_library(firewalld-cpp SHARED ${SOURCES} ${HEADERS} ${DBUS_INTERFACE_SOURCES})
 set_target_properties(firewalld-cpp PROPERTIES AUTOMOC TRUE)
-target_include_directories(firewalld-cpp PUBLIC include dbus)
+target_include_directories(firewalld-cpp PUBLIC include)
+target_include_directories(firewalld-cpp PRIVATE include_p dbus)
 target_link_libraries(firewalld-cpp PRIVATE Qt6::DBus Qt6::Core)
