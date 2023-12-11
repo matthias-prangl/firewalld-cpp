@@ -73,6 +73,12 @@ signals:
   void renamed(const QString &name);
   void updated(const QString &name);
 
+  void builtinChanged(const bool &builtin);
+  void isDefaultChanged(const bool &isDefault);
+  void filenameChanged(const QString &filename);
+  void nameChanged(const QString &name);
+  void pathChanged(const QString &path);
+
 protected:
   ServicePrivate *const d_ptr;
 

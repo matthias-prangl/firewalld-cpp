@@ -1,13 +1,14 @@
 #include "firewalld-config-service.h"
 #include "firewalld-config-service_p.h"
+#include "firewalld-internal.h"
 #include "firewalld_dbus.h"
 #include "generictypes.h"
 #include <qdbusmetatype.h>
 
 firewalld::config::ServicePrivate::ServicePrivate(const QString &path,
                                                   Service *q)
-    : serviceIface_(firewalld::dbus::kFirewallDDBusService, path,
-                    QDBusConnection::systemBus()),
+    : uni(path), serviceIface_(firewalld::dbus::kFirewallDDBusService, path,
+                               QDBusConnection::systemBus()),
       q_ptr(q) {
   qDBusRegisterMetaType<FWPort>();
   qDBusRegisterMetaType<FWPortList>();
@@ -26,6 +27,21 @@ void firewalld::config::ServicePrivate::init() {
   QObject::connect(&serviceIface_,
                    &OrgFedoraprojectFirewallD1ConfigServiceInterface::Updated,
                    this, &ServicePrivate::serviceUpdated);
+  QDBusConnection::systemBus().connect(
+      firewalld::dbus::kFirewallDDBusService, uni,
+      firewalld::dbus::kDBusPropertiesIface, "PropertiesChanged", this,
+      SLOT(dbusPropertiesChanged(QString, QVariantMap, QStringList)));
+
+  QVariantMap initialProps = firewalld::retrieveInitialProperties(
+      serviceIface_.staticInterfaceName(), uni);
+
+  if (initialProps.empty()) {
+    return;
+  }
+
+  for (auto it = initialProps.cbegin(); it != initialProps.cend(); ++it) {
+    propertyChanged(it.key(), it.value());
+  }
 }
 
 void firewalld::config::ServicePrivate::serviceRemoved(const QString &name) {
@@ -39,6 +55,40 @@ void firewalld::config::ServicePrivate::serviceRenamed(const QString &name) {
 void firewalld::config::ServicePrivate::serviceUpdated(const QString &name) {
   Q_Q(Service);
   emit q->updated(name);
+}
+
+void firewalld::config::ServicePrivate::propertyChanged(const QString &property,
+                                                     const QVariant &value) {
+  Q_Q(Service);
+
+  if (property == "builtin") {
+    builtin = value.toBool();
+    emit q->builtinChanged(builtin);
+  } else if (property == "default") {
+    isDefault = value.toBool();
+    emit q->isDefaultChanged(isDefault);
+  } else if (property == "filename") {
+    filename = value.toString();
+    emit q->filenameChanged(filename);
+  } else if (property == "name") {
+    name = value.toString();
+    emit q->nameChanged(name);
+  } else if (property == "path") {
+    path = value.toString();
+    emit q->pathChanged(path);
+  }
+}
+void firewalld::config::ServicePrivate::dbusPropertiesChanged(
+    const QString &interfaceName, const QVariantMap &properties,
+    const QStringList &invalidatedProperties) {
+  Q_UNUSED(invalidatedProperties);
+  if (!interfaceName.contains(serviceIface_.staticInterfaceName())) {
+    return;
+  }
+
+  for (auto it = properties.cbegin(); it != properties.cend(); ++it) {
+    propertyChanged(it.key(), it.value());
+  }
 }
 
 firewalld::config::Service::Service(const QString &path, QObject *parent)

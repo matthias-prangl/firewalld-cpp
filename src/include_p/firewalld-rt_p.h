@@ -30,6 +30,8 @@ public:
   FirewallD *q_ptr;
   Q_DECLARE_PUBLIC(FirewallD)
 
+  void propertyChanged(const QString &property, const QVariant &value);
+
 public slots:
   void firewalldAutomaticHelpersChanged(const QString &value);
   void firewalldDefaultZoneChanged(const QString &zone);
@@ -37,5 +39,9 @@ public slots:
   void firewalldPanicModeDisabled();
   void firewalldPanicModeEnabled();
   void firewalldReloaded();
+
+  void dbusPropertiesChanged(const QString &interfaceName,
+                             const QVariantMap &properties,
+                             const QStringList &invalidatedProperties);
 };
 } // namespace firewalld::runtime

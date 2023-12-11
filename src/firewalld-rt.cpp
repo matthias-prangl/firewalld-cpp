@@ -1,7 +1,8 @@
-#include "firewalld.h"
+#include "firewalld-rt.h"
+#include "firewalld-internal.h"
+#include "firewalld-rt_p.h"
 #include "firewalld_dbus.h"
 #include "firewalld_interface.h"
-#include "firewalld_p.h"
 
 firewalld::runtime::FirewallDPrivate::FirewallDPrivate(FirewallD *q)
     : firewalldIface_(firewalld::dbus::kFirewallDDBusService,
@@ -37,7 +38,24 @@ void firewalld::runtime::FirewallDPrivate::init() {
   QObject::connect(&firewalldIface_,
                    &OrgFedoraprojectFirewallD1Interface::Reloaded, this,
                    &FirewallDPrivate::firewalldReloaded);
+
+  QDBusConnection::systemBus().connect(
+      firewalld::dbus::kFirewallDDBusService, dbus::kFirewallDDBusBasePath,
+      firewalld::dbus::kDBusPropertiesIface, "PropertiesChanged", this,
+      SLOT(dbusPropertiesChanged(QString, QVariantMap, QStringList)));
+
+  QVariantMap initialProps = firewalld::retrieveInitialProperties(
+      firewalldIface_.staticInterfaceName(), dbus::kFirewallDDBusBasePath);
+
+  if (initialProps.empty()) {
+    return;
+  }
+
+  for (auto it = initialProps.cbegin(); it != initialProps.cend(); ++it) {
+    propertyChanged(it.key(), it.value());
+  }
 }
+
 void firewalld::runtime::FirewallDPrivate::firewalldAutomaticHelpersChanged(
     const QString &value) {
   Q_Q(FirewallD);
@@ -69,6 +87,59 @@ void firewalld::runtime::FirewallDPrivate::firewalldPanicModeEnabled() {
 void firewalld::runtime::FirewallDPrivate::firewalldReloaded() {
   Q_Q(FirewallD);
   emit q->reloaded();
+}
+
+void firewalld::runtime::FirewallDPrivate::propertyChanged(
+    const QString &property, const QVariant &value) {
+  Q_Q(FirewallD);
+
+  if (property == "BRIDGE") {
+    bridge = value.toBool();
+    emit q->bridgeChanged(bridge);
+  } else if (property == "interface_version") {
+    ipSet = value.toBool();
+    emit q->ipSetChanged(ipSet);
+  } else if (property == "IPSet") {
+    ipSetTypes = value.toStringList();
+    emit q->ipSetTypesChanged(ipSetTypes);
+  } else if (property == "IPSetTypes") {
+    ipv4 = value.toBool();
+    emit q->ipv4Changed(ipv4);
+  } else if (property == "IPv4") {
+    ipv4ICMPTypes = value.toStringList();
+    emit q->ipv4ICMPTypesChanged(ipv4ICMPTypes);
+  } else if (property == "IPv4ICMPTypes") {
+    ipv6 = value.toBool();
+    emit q->ipv6Changed(ipv6);
+  } else if (property == "IPv6") {
+    ipv6ICMPTypes = value.toStringList();
+    emit q->ipv6ICMPTypesChanged(ipv6ICMPTypes);
+  } else if (property == "IPv6ICMPTypes") {
+    ipv6_rpfilter = value.toBool();
+    emit q->ipv6_rpfilterChanged(ipv6_rpfilter);
+  } else if (property == "IPv6_rpfilter") {
+    interface_version = value.toString();
+    emit q->interface_versionChanged(interface_version);
+  } else if (property == "state") {
+    state = value.toString();
+    emit q->stateChanged(state);
+  } else if (property == "version") {
+    version = value.toString();
+    emit q->versionChanged(version);
+  }
+}
+
+void firewalld::runtime::FirewallDPrivate::dbusPropertiesChanged(
+    const QString &interfaceName, const QVariantMap &properties,
+    const QStringList &invalidatedProperties) {
+  Q_UNUSED(invalidatedProperties);
+  if (!interfaceName.contains(firewalldIface_.staticInterfaceName())) {
+    return;
+  }
+
+  for (auto it = properties.cbegin(); it != properties.cend(); ++it) {
+    propertyChanged(it.key(), it.value());
+  }
 }
 
 firewalld::runtime::FirewallD::FirewallD(QObject *parent)

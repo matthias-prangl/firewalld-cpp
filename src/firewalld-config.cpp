@@ -1,5 +1,6 @@
 #include "firewalld-config.h"
 #include "firewalld-config_p.h"
+#include "firewalld-internal.h"
 #include "firewalld_config_interface.h"
 #include "firewalld_dbus.h"
 
@@ -33,6 +34,22 @@ void firewalld::config::ConfigPrivate::init() {
                    &OrgFedoraprojectFirewallD1ConfigInterface::ZoneAdded, this,
                    &ConfigPrivate::configZoneAdded);
 
+  QDBusConnection::systemBus().connect(
+      firewalld::dbus::kFirewallDDBusService, dbus::kFirewallDDBusConfigPath,
+      firewalld::dbus::kDBusPropertiesIface, "PropertiesChanged", this,
+      SLOT(dbusPropertiesChanged(QString, QVariantMap, QStringList)));
+
+  QVariantMap initialProps = firewalld::retrieveInitialProperties(
+      configIface_.staticInterfaceName(), dbus::kFirewallDDBusConfigPath);
+
+  if (initialProps.empty()) {
+    return;
+  }
+
+  for (auto it = initialProps.cbegin(); it != initialProps.cend(); ++it) {
+    propertyChanged(it.key(), it.value());
+  }
+
   if (!configIface_.isValid()) {
     return;
   }
@@ -46,6 +63,61 @@ void firewalld::config::ConfigPrivate::init() {
   for (const auto &zonePath : zonesReply.value()) {
     const QString &path = zonePath.path();
     zoneMap_.insert(path, QSharedPointer<Zone>::create(path));
+  }
+}
+
+void firewalld::config::ConfigPrivate::propertyChanged(const QString &property,
+                                                       const QVariant &value) {
+  Q_Q(Config);
+
+  if (property == "DefaultZone") {
+    defaultZone = value.toString();
+    emit q->defaultZoneChanged(defaultZone);
+  } else if (property == "CleanupOnExit") {
+    cleanupOnExit = value.toString();
+    emit q->cleanupOnExitChanged(cleanupOnExit);
+  } else if (property == "CleanupModulesOnExit") {
+    cleanupModulesOnExit = value.toString();
+    emit q->cleanupModulesOnExitChanged(cleanupModulesOnExit);
+  } else if (property == "Lockdown") {
+    lockdown = value.toString();
+    emit q->lockdownChanged(lockdown);
+  } else if (property == "IPv6_rpfilter") {
+    iPv6_rpfilter = value.toString();
+    emit q->iPv6_rpfilterChanged(iPv6_rpfilter);
+  } else if (property == "IndividualCalls") {
+    individualCalls = value.toString();
+    emit q->individualCallsChanged(individualCalls);
+  } else if (property == "LogDenied") {
+    logDenied = value.toString();
+    emit q->logDeniedChanged(logDenied);
+  } else if (property == "FirewallBackend") {
+    firewallBackend = value.toString();
+    emit q->firewallBackendChanged(firewallBackend);
+  } else if (property == "FlushAllOnReload") {
+    flushAllOnReload = value.toString();
+    emit q->flushAllOnReloadChanged(flushAllOnReload);
+  } else if (property == "RFC3964_IPv4") {
+    rFC3964_IPv4 = value.toString();
+    emit q->rFC3964_IPv4Changed(rFC3964_IPv4);
+  } else if (property == "NftablesFlowtable") {
+    nftablesFlowtable = value.toString();
+    emit q->nftablesFlowtableChanged(nftablesFlowtable);
+  } else if (property == "NftablesCounters") {
+    nftablesCounters = value.toString();
+    emit q->nftablesCountersChanged(nftablesCounters);
+  }
+}
+void firewalld::config::ConfigPrivate::dbusPropertiesChanged(
+    const QString &interfaceName, const QVariantMap &properties,
+    const QStringList &invalidatedProperties) {
+  Q_UNUSED(invalidatedProperties);
+  if (!interfaceName.contains(configIface_.staticInterfaceName())) {
+    return;
+  }
+
+  for (auto it = properties.cbegin(); it != properties.cend(); ++it) {
+    propertyChanged(it.key(), it.value());
   }
 }
 

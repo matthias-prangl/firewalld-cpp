@@ -1,11 +1,12 @@
 #include "firewalld-config-zone.h"
 #include "firewalld-config-zone_p.h"
+#include "firewalld-internal.h"
 #include "firewalld_config_zone_interface.h"
 #include "firewalld_dbus.h"
 
 firewalld::config::ZonePrivate::ZonePrivate(const QString &path, Zone *q)
-    : zoneIface_(firewalld::dbus::kFirewallDDBusService, path,
-                 QDBusConnection::systemBus()),
+    : uni(path), zoneIface_(firewalld::dbus::kFirewallDDBusService, path,
+                            QDBusConnection::systemBus()),
       q_ptr(q) {
   qDBusRegisterMetaType<FWPort>();
   qDBusRegisterMetaType<FWPortList>();
@@ -23,6 +24,21 @@ void firewalld::config::ZonePrivate::init() {
   QObject::connect(&zoneIface_,
                    &OrgFedoraprojectFirewallD1ConfigZoneInterface::Updated,
                    this, &ZonePrivate::zoneUpdated);
+  QDBusConnection::systemBus().connect(
+      firewalld::dbus::kFirewallDDBusService, uni,
+      firewalld::dbus::kDBusPropertiesIface, "PropertiesChanged", this,
+      SLOT(dbusPropertiesChanged(QString, QVariantMap, QStringList)));
+
+  QVariantMap initialProps = firewalld::retrieveInitialProperties(
+      zoneIface_.staticInterfaceName(), uni);
+
+  if (initialProps.empty()) {
+    return;
+  }
+
+  for (auto it = initialProps.cbegin(); it != initialProps.cend(); ++it) {
+    propertyChanged(it.key(), it.value());
+  }
 }
 
 void firewalld::config::ZonePrivate::zoneRemoved(const QString &name) {
@@ -36,6 +52,40 @@ void firewalld::config::ZonePrivate::zoneRenamed(const QString &name) {
 void firewalld::config::ZonePrivate::zoneUpdated(const QString &name) {
   Q_Q(Zone);
   emit q->updated(name);
+}
+
+void firewalld::config::ZonePrivate::propertyChanged(const QString &property,
+                                                     const QVariant &value) {
+  Q_Q(Zone);
+
+  if (property == "builtin") {
+    builtin = value.toBool();
+    emit q->builtinChanged(builtin);
+  } else if (property == "default") {
+    isDefault = value.toBool();
+    emit q->isDefaultChanged(isDefault);
+  } else if (property == "filename") {
+    filename = value.toString();
+    emit q->filenameChanged(filename);
+  } else if (property == "name") {
+    name = value.toString();
+    emit q->nameChanged(name);
+  } else if (property == "path") {
+    path = value.toString();
+    emit q->pathChanged(path);
+  }
+}
+void firewalld::config::ZonePrivate::dbusPropertiesChanged(
+    const QString &interfaceName, const QVariantMap &properties,
+    const QStringList &invalidatedProperties) {
+  Q_UNUSED(invalidatedProperties);
+  if (!interfaceName.contains(zoneIface_.staticInterfaceName())) {
+    return;
+  }
+
+  for (auto it = properties.cbegin(); it != properties.cend(); ++it) {
+    propertyChanged(it.key(), it.value());
+  }
 }
 
 firewalld::config::Zone::Zone(const QString &path, QObject *parent)

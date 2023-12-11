@@ -2,7 +2,6 @@
 
 #include "generictypes.h"
 #include <QDBusPendingReply>
-#include <QObject>
 
 namespace firewalld::runtime {
 
@@ -68,10 +67,22 @@ signals:
   void panicModeEnabled();
   void reloaded();
 
+  void bridgeChanged(const bool &bridge);
+  void ipSetChanged(const bool &ipSet);
+  void ipSetTypesChanged(const QStringList &ipSetTypes);
+  void ipv4Changed(const bool &ipv4);
+  void ipv4ICMPTypesChanged(const QStringList &ipv4ICMPTypes);
+  void ipv6Changed(const bool &ipv6);
+  void ipv6ICMPTypesChanged(const QStringList &ipv6ICMPTypes);
+  void ipv6_rpfilterChanged(const bool &ipv6_rpfilter);
+  void interface_versionChanged(const QString &interface_version);
+  void stateChanged(const QString &state);
+  void versionChanged(const QString &version);
+
 protected:
   FirewallDPrivate *const d_ptr;
 
 private:
   Q_DECLARE_PRIVATE(FirewallD)
 };
-} // namespace firewalld
+} // namespace firewalld::runtime

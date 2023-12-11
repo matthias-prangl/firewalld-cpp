@@ -3,8 +3,8 @@
 #include "firewalld_config_interface.h"
 #include "firewalld_dbus.h"
 #include "generictypes.h"
-#include <qobject.h>
- firewalld::config::ConfigPoliciesPrivate::ConfigPoliciesPrivate(
+
+firewalld::config::ConfigPoliciesPrivate::ConfigPoliciesPrivate(
     ConfigPolicies *q)
     : configPoliciesIface_(firewalld::dbus::kFirewallDDBusService,
                            firewalld::dbus::kFirewallDDBusConfigPath,

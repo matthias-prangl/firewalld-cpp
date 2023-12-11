@@ -10,7 +10,8 @@ set(DBUS_INTERFACE_SOURCES
 )
 
 set(SOURCES
-  firewalld.cpp
+  firewalld-internal.cpp
+  firewalld-rt.cpp
   firewalld-config.cpp
   firewalld-config-policies.cpp
   firewalld-config-service.cpp
@@ -19,12 +20,13 @@ set(SOURCES
 )
 
 set(HEADERS 
-  include_p/firewalld_p.h
+  include_p/firewalld-rt_p.h
+  include_p/firewalld-internal.h
   include_p/firewalld-config_p.h
   include_p/firewalld-config-policies_p.h
   include_p/firewalld-config-service_p.h
   include_p/firewalld-config-zone_p.h
-  include/firewalld.h
+  include/firewalld-rt.h
   include/firewalld-config.h
   include/firewalld-config-policies.h
   include/firewalld-config-service.h

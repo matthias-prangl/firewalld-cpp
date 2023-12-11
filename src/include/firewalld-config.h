@@ -78,6 +78,19 @@ signals:
   void serviceAdded(const QString &service);
   void zoneAdded(const QString &zone);
 
+  void defaultZoneChanged(const QString &defaultZone);
+  void cleanupOnExitChanged(const QString &cleanupOnExit);
+  void cleanupModulesOnExitChanged(const QString &cleanupModulesOnExit);
+  void lockdownChanged(const QString &lockdown);
+  void iPv6_rpfilterChanged(const QString &iPv6_rpfilter);
+  void individualCallsChanged(const QString &individualCalls);
+  void logDeniedChanged(const QString &logDenied);
+  void firewallBackendChanged(const QString &firewallBackend);
+  void flushAllOnReloadChanged(const QString &flushAllOnReload);
+  void rFC3964_IPv4Changed(const QString &rFC3964_IPv4);
+  void nftablesFlowtableChanged(const QString &nftablesFlowtable);
+  void nftablesCountersChanged(const QString &nftablesCounters);
+
 protected:
   ConfigPrivate *const d_ptr;
 

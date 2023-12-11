@@ -1,8 +1,8 @@
 #pragma once
 
-#include "firewalld_config_interface.h"
 #include "firewalld-config-zone.h"
 #include "firewalld-config.h"
+#include "firewalld_config_interface.h"
 
 namespace firewalld::config {
 
@@ -34,6 +34,8 @@ public:
 
   QMap<QString, QSharedPointer<Zone>> zoneMap_;
 
+  void propertyChanged(const QString &property, const QVariant &value);
+
 public slots:
   void configHelperAdded(const QString &helper);
   void configIPSetAdded(const QString &ipset);
@@ -41,5 +43,9 @@ public slots:
   void configPolicyAdded(const QString &policy);
   void configServiceAdded(const QString &service);
   void configZoneAdded(const QString &zone);
+
+  void dbusPropertiesChanged(const QString &interfaceName,
+                             const QVariantMap &properties,
+                             const QStringList &invalidatedProperties);
 };
 } // namespace firewalld::config
