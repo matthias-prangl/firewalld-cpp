@@ -17,6 +17,7 @@ QVariantMap firewalld::retrieveInitialProperties(const QString &interfaceName,
     while (!dbusArgument.atEnd()) {
       dbusArgument >> result;
     }
+    return result;
   }
   return QVariantMap();
 }
