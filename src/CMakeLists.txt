@@ -17,6 +17,7 @@ set(SOURCES
   firewalld-internal.cpp
   firewalld-rt.cpp
   firewalld-rt-zone.cpp
+  firewalld-service.cpp
   generictypes.cpp
 )
 
@@ -27,6 +28,7 @@ set(HEADERS
   include/firewalld-config-zone.h
   include/firewalld-rt.h
   include/firewalld-rt-zone.h
+  include/firewalld-service.h
   include_p/firewalld-config_p.h
   include_p/firewalld-config-policies_p.h
   include_p/firewalld-config-service_p.h

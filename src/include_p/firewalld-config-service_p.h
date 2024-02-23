@@ -4,14 +4,14 @@
 
 namespace firewalld::config {
 
-class Service;
+class ServiceDBus;
 
-class ServicePrivate : public QObject {
+class ServiceDBusPrivate : public QObject {
   Q_OBJECT
 
 public:
-  explicit ServicePrivate(const QString &path, Service *q);
-  ~ServicePrivate() override;
+  explicit ServiceDBusPrivate(const QString &path, ServiceDBus *q);
+  ~ServiceDBusPrivate() override;
   void init();
 
   bool builtin;
@@ -22,9 +22,9 @@ public:
   QString uni;
 
   OrgFedoraprojectFirewallD1ConfigServiceInterface serviceIface_;
-  Service *q_ptr;
+  ServiceDBus *q_ptr;
 
-  Q_DECLARE_PUBLIC(Service)
+  Q_DECLARE_PUBLIC(ServiceDBus)
 
   void propertyChanged(const QString &property, const QVariant &value);
 

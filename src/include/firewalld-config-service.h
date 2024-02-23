@@ -4,9 +4,9 @@
 
 namespace firewalld::config {
 
-class ServicePrivate;
+class ServiceDBusPrivate;
 
-class Service : public QObject {
+class ServiceDBus : public QObject {
   Q_OBJECT
   Q_PROPERTY(bool builtin READ builtin)
   Q_PROPERTY(bool isDefault READ isDefault)
@@ -15,8 +15,8 @@ class Service : public QObject {
   Q_PROPERTY(QString path READ path)
 
 public:
-  explicit Service(const QString &path, QObject *parent = nullptr);
-  ~Service() override;
+  explicit ServiceDBus(const QString &path, QObject *parent = nullptr);
+  ~ServiceDBus() override;
 
   bool builtin();
   bool isDefault();
@@ -80,9 +80,9 @@ signals:
   void pathChanged(const QString &path);
 
 protected:
-  ServicePrivate *const d_ptr;
+  ServiceDBusPrivate *const d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(Service)
+  Q_DECLARE_PRIVATE(ServiceDBus)
 };
 } // namespace firewalld::config

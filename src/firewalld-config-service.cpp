@@ -5,8 +5,8 @@
 #include "generictypes.h"
 #include <qdbusmetatype.h>
 
-firewalld::config::ServicePrivate::ServicePrivate(const QString &path,
-                                                  Service *q)
+firewalld::config::ServiceDBusPrivate::ServiceDBusPrivate(const QString &path,
+                                                  ServiceDBus *q)
     : uni(path), serviceIface_(firewalld::dbus::kFirewallDDBusService, path,
                                QDBusConnection::systemBus()),
       q_ptr(q) {
@@ -15,18 +15,18 @@ firewalld::config::ServicePrivate::ServicePrivate(const QString &path,
   qDBusRegisterMetaType<FWStringMap>();
 }
 
-firewalld::config::ServicePrivate::~ServicePrivate() {}
+firewalld::config::ServiceDBusPrivate::~ServiceDBusPrivate() {}
 
-void firewalld::config::ServicePrivate::init() {
+void firewalld::config::ServiceDBusPrivate::init() {
   QObject::connect(&serviceIface_,
                    &OrgFedoraprojectFirewallD1ConfigServiceInterface::Removed,
-                   this, &ServicePrivate::serviceRemoved);
+                   this, &ServiceDBusPrivate::serviceRemoved);
   QObject::connect(&serviceIface_,
                    &OrgFedoraprojectFirewallD1ConfigServiceInterface::Renamed,
-                   this, &ServicePrivate::serviceRenamed);
+                   this, &ServiceDBusPrivate::serviceRenamed);
   QObject::connect(&serviceIface_,
                    &OrgFedoraprojectFirewallD1ConfigServiceInterface::Updated,
-                   this, &ServicePrivate::serviceUpdated);
+                   this, &ServiceDBusPrivate::serviceUpdated);
   QDBusConnection::systemBus().connect(
       firewalld::dbus::kFirewallDDBusService, uni,
       firewalld::dbus::kDBusPropertiesIface, "PropertiesChanged", this,
@@ -44,22 +44,22 @@ void firewalld::config::ServicePrivate::init() {
   }
 }
 
-void firewalld::config::ServicePrivate::serviceRemoved(const QString &name) {
-  Q_Q(Service);
+void firewalld::config::ServiceDBusPrivate::serviceRemoved(const QString &name) {
+  Q_Q(ServiceDBus);
   emit q->removed(name);
 }
-void firewalld::config::ServicePrivate::serviceRenamed(const QString &name) {
-  Q_Q(Service);
+void firewalld::config::ServiceDBusPrivate::serviceRenamed(const QString &name) {
+  Q_Q(ServiceDBus);
   emit q->renamed(name);
 }
-void firewalld::config::ServicePrivate::serviceUpdated(const QString &name) {
-  Q_Q(Service);
+void firewalld::config::ServiceDBusPrivate::serviceUpdated(const QString &name) {
+  Q_Q(ServiceDBus);
   emit q->updated(name);
 }
 
-void firewalld::config::ServicePrivate::propertyChanged(const QString &property,
+void firewalld::config::ServiceDBusPrivate::propertyChanged(const QString &property,
                                                      const QVariant &value) {
-  Q_Q(Service);
+  Q_Q(ServiceDBus);
 
   if (property == "builtin") {
     builtin = value.toBool();
@@ -78,7 +78,7 @@ void firewalld::config::ServicePrivate::propertyChanged(const QString &property,
     emit q->pathChanged(path);
   }
 }
-void firewalld::config::ServicePrivate::dbusPropertiesChanged(
+void firewalld::config::ServiceDBusPrivate::dbusPropertiesChanged(
     const QString &interfaceName, const QVariantMap &properties,
     const QStringList &invalidatedProperties) {
   Q_UNUSED(invalidatedProperties);
@@ -91,255 +91,255 @@ void firewalld::config::ServicePrivate::dbusPropertiesChanged(
   }
 }
 
-firewalld::config::Service::Service(const QString &path, QObject *parent)
-    : QObject(parent), d_ptr(new ServicePrivate(path, this)) {
-  Q_D(Service);
+firewalld::config::ServiceDBus::ServiceDBus(const QString &path, QObject *parent)
+    : QObject(parent), d_ptr(new ServiceDBusPrivate(path, this)) {
+  Q_D(ServiceDBus);
   d->init();
 }
 
-firewalld::config::Service::~Service() {
-  Q_D(Service);
+firewalld::config::ServiceDBus::~ServiceDBus() {
+  Q_D(ServiceDBus);
   delete d;
 }
 
-bool firewalld::config::Service::builtin() {
-  Q_D(const Service);
+bool firewalld::config::ServiceDBus::builtin() {
+  Q_D(const ServiceDBus);
   return d->builtin;
 }
 
-bool firewalld::config::Service::isDefault() {
-  Q_D(const Service);
+bool firewalld::config::ServiceDBus::isDefault() {
+  Q_D(const ServiceDBus);
   return d->isDefault;
 }
 
-QString firewalld::config::Service::filename() {
-  Q_D(const Service);
+QString firewalld::config::ServiceDBus::filename() {
+  Q_D(const ServiceDBus);
   return d->filename;
 }
 
-QString firewalld::config::Service::name() {
-  Q_D(const Service);
+QString firewalld::config::ServiceDBus::name() {
+  Q_D(const ServiceDBus);
   return d->name;
 }
 
-QString firewalld::config::Service::path() {
-  Q_D(const Service);
+QString firewalld::config::ServiceDBus::path() {
+  Q_D(const ServiceDBus);
   return d->path;
 }
 
 QDBusPendingReply<>
-firewalld::config::Service::addInclude(const QString &include) {
-  Q_D(Service);
+firewalld::config::ServiceDBus::addInclude(const QString &include) {
+  Q_D(ServiceDBus);
   return d->serviceIface_.addInclude(include);
 }
 
 QDBusPendingReply<>
-firewalld::config::Service::addPort(const QString &port,
+firewalld::config::ServiceDBus::addPort(const QString &port,
                                     const QString &protocol) {
-  Q_D(Service);
+  Q_D(ServiceDBus);
   return d->serviceIface_.addPort(port, protocol);
 }
 
 QDBusPendingReply<>
-firewalld::config::Service::addProtocol(const QString &protocol) {
-  Q_D(Service);
+firewalld::config::ServiceDBus::addProtocol(const QString &protocol) {
+  Q_D(ServiceDBus);
   return d->serviceIface_.addProtocol(protocol);
 }
 
 QDBusPendingReply<>
-firewalld::config::Service::addSourcePort(const QString &port,
+firewalld::config::ServiceDBus::addSourcePort(const QString &port,
                                           const QString &protocol) {
-  Q_D(Service);
+  Q_D(ServiceDBus);
   return d->serviceIface_.addSourcePort(port, protocol);
 }
 
-QDBusPendingReply<QString> firewalld::config::Service::getDescription() {
-  Q_D(Service);
+QDBusPendingReply<QString> firewalld::config::ServiceDBus::getDescription() {
+  Q_D(ServiceDBus);
   return d->serviceIface_.getDescription();
 }
 
 QDBusPendingReply<QString>
-firewalld::config::Service::getDestination(const QString &family) {
-  Q_D(Service);
+firewalld::config::ServiceDBus::getDestination(const QString &family) {
+  Q_D(ServiceDBus);
   return d->serviceIface_.getDestination(family);
 }
 
-QDBusPendingReply<FWStringMap> firewalld::config::Service::getDestinations() {
-  Q_D(Service);
+QDBusPendingReply<FWStringMap> firewalld::config::ServiceDBus::getDestinations() {
+  Q_D(ServiceDBus);
   return d->serviceIface_.getDestinations();
 }
 
-QDBusPendingReply<QStringList> firewalld::config::Service::getIncludes() {
-  Q_D(Service);
+QDBusPendingReply<QStringList> firewalld::config::ServiceDBus::getIncludes() {
+  Q_D(ServiceDBus);
   return d->serviceIface_.getIncludes();
 }
 
-QDBusPendingReply<FWPortList> firewalld::config::Service::getPorts() {
-  Q_D(Service);
+QDBusPendingReply<FWPortList> firewalld::config::ServiceDBus::getPorts() {
+  Q_D(ServiceDBus);
   return d->serviceIface_.getPorts();
 }
 
-QDBusPendingReply<QStringList> firewalld::config::Service::getProtocols() {
-  Q_D(Service);
+QDBusPendingReply<QStringList> firewalld::config::ServiceDBus::getProtocols() {
+  Q_D(ServiceDBus);
   return d->serviceIface_.getProtocols();
 }
 
-QDBusPendingReply<QVariantMap> firewalld::config::Service::getSettings2() {
-  Q_D(Service);
+QDBusPendingReply<QVariantMap> firewalld::config::ServiceDBus::getSettings2() {
+  Q_D(ServiceDBus);
   return d->serviceIface_.getSettings2();
 }
 
-QDBusPendingReply<QString> firewalld::config::Service::getShort() {
-  Q_D(Service);
+QDBusPendingReply<QString> firewalld::config::ServiceDBus::getShort() {
+  Q_D(ServiceDBus);
   return d->serviceIface_.getShort();
 }
 
-QDBusPendingReply<FWPortList> firewalld::config::Service::getSourcePorts() {
-  Q_D(Service);
+QDBusPendingReply<FWPortList> firewalld::config::ServiceDBus::getSourcePorts() {
+  Q_D(ServiceDBus);
   return d->serviceIface_.getSourcePorts();
 }
 
-QDBusPendingReply<QString> firewalld::config::Service::getVersion() {
-  Q_D(Service);
+QDBusPendingReply<QString> firewalld::config::ServiceDBus::getVersion() {
+  Q_D(ServiceDBus);
   return d->serviceIface_.getVersion();
 }
 
-QDBusPendingReply<> firewalld::config::Service::loadDefaults() {
-  Q_D(Service);
+QDBusPendingReply<> firewalld::config::ServiceDBus::loadDefaults() {
+  Q_D(ServiceDBus);
   return d->serviceIface_.loadDefaults();
 }
 
 QDBusPendingReply<bool>
-firewalld::config::Service::queryDestination(const QString &family,
+firewalld::config::ServiceDBus::queryDestination(const QString &family,
                                              const QString &address) {
-  Q_D(Service);
+  Q_D(ServiceDBus);
   return d->serviceIface_.queryDestination(family, address);
 }
 
 QDBusPendingReply<bool>
-firewalld::config::Service::queryInclude(const QString &include) {
-  Q_D(Service);
+firewalld::config::ServiceDBus::queryInclude(const QString &include) {
+  Q_D(ServiceDBus);
   return d->serviceIface_.queryInclude(include);
 }
 
 QDBusPendingReply<bool>
-firewalld::config::Service::queryPort(const QString &port,
+firewalld::config::ServiceDBus::queryPort(const QString &port,
                                       const QString &protocol) {
-  Q_D(Service);
+  Q_D(ServiceDBus);
   return d->serviceIface_.queryPort(port, protocol);
 }
 
 QDBusPendingReply<bool>
-firewalld::config::Service::queryProtocol(const QString &protocol) {
-  Q_D(Service);
+firewalld::config::ServiceDBus::queryProtocol(const QString &protocol) {
+  Q_D(ServiceDBus);
   return d->serviceIface_.queryProtocol(protocol);
 }
 
 QDBusPendingReply<bool>
-firewalld::config::Service::querySourcePort(const QString &port,
+firewalld::config::ServiceDBus::querySourcePort(const QString &port,
                                             const QString &protocol) {
-  Q_D(Service);
+  Q_D(ServiceDBus);
   return d->serviceIface_.querySourcePort(port, protocol);
 }
 
-QDBusPendingReply<> firewalld::config::Service::remove() {
-  Q_D(Service);
+QDBusPendingReply<> firewalld::config::ServiceDBus::remove() {
+  Q_D(ServiceDBus);
   return d->serviceIface_.remove();
 }
 
 QDBusPendingReply<>
-firewalld::config::Service::removeDestination(const QString &family) {
-  Q_D(Service);
+firewalld::config::ServiceDBus::removeDestination(const QString &family) {
+  Q_D(ServiceDBus);
   return d->serviceIface_.removeDestination(family);
 }
 
 QDBusPendingReply<>
-firewalld::config::Service::removeInclude(const QString &include) {
-  Q_D(Service);
+firewalld::config::ServiceDBus::removeInclude(const QString &include) {
+  Q_D(ServiceDBus);
   return d->serviceIface_.removeInclude(include);
 }
 
 QDBusPendingReply<>
-firewalld::config::Service::removePort(const QString &port,
+firewalld::config::ServiceDBus::removePort(const QString &port,
                                        const QString &protocol) {
-  Q_D(Service);
+  Q_D(ServiceDBus);
   return d->serviceIface_.removePort(port, protocol);
 }
 
 QDBusPendingReply<>
-firewalld::config::Service::removeProtocol(const QString &protocol) {
-  Q_D(Service);
+firewalld::config::ServiceDBus::removeProtocol(const QString &protocol) {
+  Q_D(ServiceDBus);
   return d->serviceIface_.removeProtocol(protocol);
 }
 
 QDBusPendingReply<>
-firewalld::config::Service::removeSourcePort(const QString &port,
+firewalld::config::ServiceDBus::removeSourcePort(const QString &port,
                                              const QString &protocol) {
-  Q_D(Service);
+  Q_D(ServiceDBus);
   return d->serviceIface_.removeSourcePort(port, protocol);
 }
 
-QDBusPendingReply<> firewalld::config::Service::rename(const QString &name) {
-  Q_D(Service);
+QDBusPendingReply<> firewalld::config::ServiceDBus::rename(const QString &name) {
+  Q_D(ServiceDBus);
   return d->serviceIface_.rename(name);
 }
 
 QDBusPendingReply<>
-firewalld::config::Service::setDescription(const QString &description) {
-  Q_D(Service);
+firewalld::config::ServiceDBus::setDescription(const QString &description) {
+  Q_D(ServiceDBus);
   return d->serviceIface_.setDescription(description);
 }
 
 QDBusPendingReply<>
-firewalld::config::Service::setDestination(const QString &family,
+firewalld::config::ServiceDBus::setDestination(const QString &family,
                                            const QString &address) {
-  Q_D(Service);
+  Q_D(ServiceDBus);
   return d->serviceIface_.setDestination(family, address);
 }
 
 QDBusPendingReply<>
-firewalld::config::Service::setDestinations(FWStringMap destinations) {
-  Q_D(Service);
+firewalld::config::ServiceDBus::setDestinations(FWStringMap destinations) {
+  Q_D(ServiceDBus);
   return d->serviceIface_.setDestinations(destinations);
 }
 
 QDBusPendingReply<>
-firewalld::config::Service::setIncludes(const QStringList &includes) {
-  Q_D(Service);
+firewalld::config::ServiceDBus::setIncludes(const QStringList &includes) {
+  Q_D(ServiceDBus);
   return d->serviceIface_.setIncludes(includes);
 }
 
-QDBusPendingReply<> firewalld::config::Service::setPorts(FWPortList ports) {
-  Q_D(Service);
+QDBusPendingReply<> firewalld::config::ServiceDBus::setPorts(FWPortList ports) {
+  Q_D(ServiceDBus);
   return d->serviceIface_.setPorts(ports);
 }
 
 QDBusPendingReply<>
-firewalld::config::Service::setProtocols(const QStringList &protocols) {
-  Q_D(Service);
+firewalld::config::ServiceDBus::setProtocols(const QStringList &protocols) {
+  Q_D(ServiceDBus);
   return d->serviceIface_.setProtocols(protocols);
 }
 
 QDBusPendingReply<>
-firewalld::config::Service::setShort(const QString &shortName) {
-  Q_D(Service);
+firewalld::config::ServiceDBus::setShort(const QString &shortName) {
+  Q_D(ServiceDBus);
   return d->serviceIface_.setShort(shortName);
 }
 
 QDBusPendingReply<>
-firewalld::config::Service::setSourcePorts(FWPortList ports) {
-  Q_D(Service);
+firewalld::config::ServiceDBus::setSourcePorts(FWPortList ports) {
+  Q_D(ServiceDBus);
   return d->serviceIface_.setSourcePorts(ports);
 }
 
 QDBusPendingReply<>
-firewalld::config::Service::setVersion(const QString &version) {
-  Q_D(Service);
+firewalld::config::ServiceDBus::setVersion(const QString &version) {
+  Q_D(ServiceDBus);
   return d->serviceIface_.setVersion(version);
 }
 
 QDBusPendingReply<>
-firewalld::config::Service::update2(const QVariantMap &settings) {
-  Q_D(Service);
+firewalld::config::ServiceDBus::update2(const QVariantMap &settings) {
+  Q_D(ServiceDBus);
   return d->serviceIface_.update2(settings);
 }
